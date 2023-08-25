@@ -1,6 +1,11 @@
 
 import { useEffect, useState } from 'react';
 import './App.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faStar,  } from '@fortawesome/free-solid-svg-icons'
+import { faStar as farStar } from '@fortawesome/free-regular-svg-icons'
+library.add(faStar, farStar )
 const SearchBar = ({search, setSearch}) => {
   
   const handleKeyDown = (e) => {
@@ -15,13 +20,19 @@ const SearchBar = ({search, setSearch}) => {
   )
 }
 const DisplayCrypto = (props) => {
+  const [isFavourite, setIsFavourite] = useState(props.is_favourite)
+  const handleClickStar = () => {
+    setIsFavourite(!isFavourite)
+  }
   return (
     <div className='cryptocard'>
-      <img src={props.image} alt={props.name}/>
+      <img className="cryptoimage" src={props.image} alt={props.name}/>
       <h2>{props.name}/{props.symbol}</h2>
       <h3>Current price: {props.current_price}</h3>
       <h3>Highest/Lowest (24h): {props.high_24h}/{props.low_24h} </h3>
       <h3>Price Change (24h): {props.price_change_percentage_24h}%</h3>
+      <FontAwesomeIcon className='starimage' icon={isFavourite? "fa-solid fa-star" : "fa-regular fa-star"} 
+        style={{color: "#bfcc05",cursor: 'pointer'}} onClick={handleClickStar}/>    
       
     </div>
   )
@@ -29,6 +40,7 @@ const DisplayCrypto = (props) => {
 function App() {
   const [search, setSearch] = useState('')
   const [data, setData] = useState([])
+  const [favourites, setFavourites] = useState([])
     useEffect(() => {
     setData([
       {
@@ -55,6 +67,12 @@ function App() {
       },
     ]);
   }, []);
+  useEffect(() => {
+    const savedFavourites = localStorage.getItem('crypto_favourites')
+      if (savedFavourites){
+      setFavourites(JSON.parse(savedFavourites))
+    }
+  }, [])
   // useEffect(() => {
   //   fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=INR&order=market_cap_desc&per_page=100&page=1&sparkline=falses')    
   //   .then(res => res.json())
@@ -69,6 +87,7 @@ function App() {
         <div className="cryptoBox">
           {data.map((crypto) => (
           <DisplayCrypto 
+            is_favourite={favourites.includes(crypto.symbol)}
             name={crypto.name} 
             image={crypto.image} 
             symbol={crypto.symbol}
