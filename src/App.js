@@ -22,6 +22,21 @@ const SearchBar = ({search, setSearch}) => {
 const DisplayCrypto = (props) => {
   const [isFavourite, setIsFavourite] = useState(props.is_favourite)
   const handleClickStar = () => {
+    const savedFavourites = JSON.parse(localStorage.getItem('crypto_favourites'))
+    var newFavourites = 0
+    if (isFavourite){
+      newFavourites = savedFavourites.filter((favourite) => favourite !== props.symbol)      
+    }
+    else{
+      if (savedFavourites){
+        newFavourites = [...savedFavourites, props.symbol]      
+      }
+      else{
+        newFavourites = [props.symbol]
+      }         
+    }
+    
+    localStorage.setItem('crypto_favourites', JSON.stringify(newFavourites))
     setIsFavourite(!isFavourite)
   }
   return (
@@ -69,8 +84,10 @@ function App() {
   }, []);
   useEffect(() => {
     const savedFavourites = localStorage.getItem('crypto_favourites')
+    
+    console.log(savedFavourites)
       if (savedFavourites){
-      setFavourites(JSON.parse(savedFavourites))
+        setFavourites(JSON.parse(savedFavourites))
     }
   }, [])
   // useEffect(() => {
