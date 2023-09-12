@@ -83,8 +83,7 @@
 .starimage{
   width: 20px;
   height: 20px;
-  margin: 5px;
-  
+  margin: 5px;  
   top: 0;
   right: 0;
   position: absolute;
@@ -96,4 +95,8 @@
 
 .starimage:active {
   transform: scale(0.9);
+}
+
+.showSelection{
+  text-align: left;
 }
